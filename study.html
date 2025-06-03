@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyHub - Student Study Center</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Page Container */
+        .page {
+            display: none;
+            padding: 2rem 0;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 1rem 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* Study Room Status */
+        .room-status {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .available {
+            background: #4ade80;
+            color: white;
+        }
+
+        .occupied {
+            background: #ef4444;
+            color: white;
+        }
+
+        .reserved {
+            background: #f59e0b;
+            color: white;
+        }
+
+        /* Schedule Table */
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .schedule-table th {
+            background: #f8fafc;
+            font-weight: bold;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin: 1rem 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Stats */
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 2rem 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        /* Resource Items */
+        .resource-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 10px;
+            margin: 0.5rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .resource-item:hover {
+            background: #e2e8f0;
+            transform: translateX(5px);
+        }
+
+        .resource-icon {
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 1rem;
+            font-weight: bold;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="nav-container">
+                <div class="logo">StudyHub</div>
+                <div class="nav-links">
+                    <button class="nav-btn active" data-page="home">Home</button>
+                    <button class="nav-btn" data-page="rooms">Study Rooms</button>
+                    <button class="nav-btn" data-page="resources">Resources</button>
+                    <button class="nav-btn" data-page="schedule">Schedule</button>
+                    <button class="nav-btn" data-page="profile">Profile</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Home Page -->
+        <div id="home" class="page active">
+            <div class="hero">
+                <h1>Welcome to StudyHub</h1>
+                <p>Your ultimate student study center for academic success</p>
+                <button class="btn" onclick="showPage('rooms')">Book Study Room</button>
+                <button class="btn btn-secondary" onclick="showPage('resources')">Browse Resources</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-number">24</span>
+                    <span class="stat-label">Study Rooms</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">150+</span>
+                    <span class="stat-label">Resources</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Active Students</span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>Quick Booking</h3>
+                    <p>Reserve study rooms instantly with our smart booking system. Find the perfect space for individual or group study sessions.</p>
+                    <button class="btn" onclick="showPage('rooms')">Book Now</button>
+                </div>
+                <div class="card">
+                    <h3>Digital Library</h3>
+                    <p>Access thousands of academic resources, e-books, research papers, and study materials from our comprehensive digital library.</p>
+                    <button class="btn" onclick="showPage('resources')">Explore</button>
+                </div>
+                <div class="card">
+                    <h3>Study Groups</h3>
+                    <p>Join or create study groups with fellow students. Collaborate, share knowledge, and achieve academic excellence together.</p>
+                    <button class="btn">Join Groups</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Study Rooms Page -->
+        <div id="rooms" class="page">
+            <h2 style="color: white; text-align: center; margin: 2rem 0;">Study Rooms</h2>
+            
+            <div class="card">
+                <h3>Book a Study Room</h3>
+                <div class="form-group">
+                    <label>Date:</label>
+                    <input type="date" id="bookingDate">
+                </div>
+                <div class="form-group">
+                    <label>Time Slot:</label>
+                    <select id="timeSlot">
+                        <option>9:00 AM - 11:00 AM</option>
+                        <option>11:00 AM - 1:00 PM</option>
+                        <option>1:00 PM - 3:00 PM</option>
+                        <option>3:00 PM - 5:00 PM</option>
+                        <option>5:00 PM - 7:00 PM</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Room Type:</label>
+                    <select id="roomType">
+                        <option>Individual Study</option>
+                        <option>Group Study (4-6 people)</option>
+                        <option>Conference Room (8-12 people)</option>
+                        <option>Computer Lab</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="bookRoom()">Book Room</button>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h4>Room A101 - Individual</h4>
+                    <p>Quiet individual study space with desk and power outlets</p>
+                    <span class="room-status available">Available</span>
+                    <button class="btn">Reserve</button>
+                </div>
+                <div class="card">
+                    <h4>Room B205 - Group</h4>
+                    <p>Collaborative space with whiteboard and projector</p>
+                    <span class="room-status occupied">Occupied</span>
+                    <button class="btn" disabled>Reserve</button>
+                </div>
+                <div class="card">
+                    <h4>Room C302 - Conference</h4>
+                    <p>Large meeting room with video conferencing setup</p>
+                    <span class="room-status reserved">Reserved</span>
+                    <button class="btn" disabled>Reserve</button>
+                </div>
+                <div class="card">
+                    <h4>Computer Lab D110</h4>
+                    <p>20 high-spec computers with specialized software</p>
+                    <span class="room-status available">Available</span>
+                    <button class="btn">Reserve</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resources Page -->
+        <div id="resources" class="page">
+            <h2 style="color: white; text-align: center; margin: 2rem 0;">Study Resources</h2>
+            
+            <div class="card">
+                <h3>Search Resources</h3>
+                <div class="form-group">
+                    <input type="text" placeholder="Search books, papers, articles..." id="resourceSearch">
+                </div>
+                <div class="form-group">
+                    <select id="categoryFilter">
+                        <option>All Categories</option>
+                        <option>Computer Science</option>
+                        <option>Mathematics</option>
+                        <option>Physics</option>
+                        <option>Chemistry</option>
+                        <option>Biology</option>
+                        <option>Literature</option>
+                    </select>
+                </div>
+                <button class="btn">Search</button>
+            </div>
+
+            <div class="card">
+                <h3>Popular Resources</h3>
+                <div class="resource-item">
+                    <div class="resource-icon">📚</div>
+                    <div>
+                        <h4>Introduction to Algorithms (CLRS)</h4>
+                        <p>Comprehensive guide to algorithmic thinking</p>
+                    </div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-icon">📖</div>
+                    <div>
+                        <h4>Calculus: Early Transcendentals</h4>
+                        <p>Mathematical foundations and applications</p>
+                    </div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-icon">🔬</div>
+                    <div>
+                        <h4>Physics for Scientists and Engineers</h4>
+                        <p>Complete physics reference with examples</p>
+                    </div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-icon">💻</div>
+                    <div>
+                        <h4>Clean Code: A Handbook</h4>
+                        <p>Software development best practices</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedule Page -->
+        <div id="schedule" class="page">
+            <h2 style="color: white; text-align: center; margin: 2rem 0;">My Schedule</h2>
+            
+            <div class="card">
+                <h3>Upcoming Sessions</h3>
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Room</th>
+                            <th>Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Today</td>
+                            <td>2:00 PM - 4:00 PM</td>
+                            <td>Room A101</td>
+                            <td>Individual Study</td>
+                            <td><button class="btn">Cancel</button></td>
+                        </tr>
+                        <tr>
+                            <td>Tomorrow</td>
+                            <td>10:00 AM - 12:00 PM</td>
+                            <td>Room B205</td>
+                            <td>Group Study</td>
+                            <td><button class="btn">Modify</button></td>
+                        </tr>
+                        <tr>
+                            <td>Dec 5</td>
+                            <td>3:00 PM - 5:00 PM</td>
+                            <td>Computer Lab D110</td>
+                            <td>Programming Session</td>
+                            <td><button class="btn">Cancel</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h3>Study Hours This Week</h3>
+                <div style="background: #f8fafc; padding: 2rem; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 3rem; font-weight: bold; color: #667eea;">24</div>
+                    <div>Total Hours Booked</div>
+                    <div style="margin-top: 1rem;">
+                        <span style="color: #10b981;">↗️ 15% increase from last week</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Page -->
+        <div id="profile" class="page">
+            <h2 style="color: white; text-align: center; margin: 2rem 0;">My Profile</h2>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3>Profile Information</h3>
+                    <div class="form-group">
+                        <label>Full Name:</label>
+                        <input type="text" value="John Doe" id="fullName">
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" value="john.doe@university.edu" id="email">
+                    </div>
+                    <div class="form-group">
+                        <label>Student ID:</label>
+                        <input type="text" value="2024CS001" id="studentId" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Major:</label>
+                        <select id="major">
+                            <option>Computer Science</option>
+                            <option>Mathematics</option>
+                            <option>Physics</option>
+                            <option>Chemistry</option>
+                            <option>Biology</option>
+                        </select>
+                    </div>
+                    <button class="btn">Update Profile</button>
+                </div>
+                
+                <div class="card">
+                    <h3>Study Statistics</h3>
+                    <div style="margin: 1rem 0;">
+                        <strong>Total Study Hours:</strong> 156 hours
+                    </div>
+                    <div style="margin: 1rem 0;">
+                        <strong>Rooms Booked:</strong> 45 sessions
+                    </div>
+                    <div style="margin: 1rem 0;">
+                        <strong>Resources Accessed:</strong> 89 items
+                    </div>
+                    <div style="margin: 1rem 0;">
+                        <strong>Study Groups Joined:</strong> 8 groups
+                    </div>
+                    <div style="margin: 1rem 0;">
+                        <strong>Member Since:</strong> September 2024
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Preferences</h3>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" checked> Email notifications for bookings
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" checked> SMS reminders
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox"> Newsletter subscription
+                    </label>
+                </div>
+                <button class="btn">Save Preferences</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Remove active class from nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+
+            // Add active class to corresponding nav button
+            document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
+        }
+
+        // Navigation event listeners
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const pageId = btn.getAttribute('data-page');
+                showPage(pageId);
+            });
+        });
+
+        // Room booking function
+        function bookRoom() {
+            const date = document.getElementById('bookingDate').value;
+            const time = document.getElementById('timeSlot').value;
+            const type = document.getElementById('roomType').value;
+            
+            if (date) {
+                alert(`Room booked successfully!\nDate: ${date}\nTime: ${time}\nType: ${type}`);
+            } else {
+                alert('Please select a date for your booking.');
+            }
+        }
+
+        // Set default date to today
+        document.getElementById('bookingDate').valueAsDate = new Date();
+
+        // Add some interactive feedback
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                if (!this.disabled) {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
